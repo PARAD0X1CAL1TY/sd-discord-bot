@@ -1,8 +1,8 @@
 # sd-discord-bot
 
-##Getting Started
+## Getting Started
 
-#1. Prerequisites
+# 1. Prerequisites
 
   1.1 Bare minimum software needed to get started
     - Miniconda - download from https://docs.conda.io/en/latest/miniconda.html
