@@ -7,7 +7,6 @@ from discord import app_commands
 from datetime import datetime
 from configparser import ConfigParser
 config = ConfigParser()
-#target_channel = discord.get_channel("944054272348278827")
 
 with open('token.txt', 'r') as file:
     TOKEN = file.read().replace('\n', '')
@@ -29,6 +28,7 @@ class processJob():
 
 processQueue = []
 
+queueRunning = False
 intents = discord.Intents.default()
 client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
@@ -94,15 +94,12 @@ async def sd(interaction: discord.Interaction):
         
 
 #default SD command to generate an image
-@tree.command(name = "sd", description = "Test Command", guild=discord.Object(GUILD)) #Add the guild ids in which the slash command will appear. If it should be in all, remove the argument, but note that it will take some time (up to an hour) to register the command if it's for all guilds.
+@tree.command(name = "sd", description = "Test Command", guild=discord.Object(GUILD)) 
 async def sd(interaction: discord.Interaction, prompt: str):
    
-
-
     current_time = now.strftime("%H:%M:%S")
     print(interaction.user)
     user = str(interaction.user)
-
 
     isExist = os.path.exists("sdout/"+user)
     # Create config
@@ -176,13 +173,24 @@ async def list_models(Interaction):
     await Interaction.response.send_message(Interaction.user.mention + " here's the availible models:" + models)
 
 
-#Adds a job to the process queue, in progress rn UPDATE TOMORROW TO REPLACE MULTITHREADING CORRECTLY
+#Adds a job to the process queue, in progress rn UPDATE SOON TO REPLACE MULTITHREADING CORRECTLY
 async def addProcessQueue(user,currentUserSettings):
     newJob = processJob()
     newJob.user = user
     newJob.prompt = currentUserSettings
-    newJob.priority = 1
+    newJob.priority = 1 #can be changed for better job management in the future.
+    processQueue.append(newJob)
+    runQueue()
+
+#Def broken
+def runQueue():
+    if queueRunning != False:
+        queueRunning = True
+        processQueue.sort(key=lambda x: x.count, reverse=True)
+        for job in processQueue:
+            os.system('python ./scripts/txt2img.py --prompt ' + '"' + processQueue + '"' + ' --plms --ckpt ./models/Stable-diffusion/' + ckpt + ' --skip_grid --n_samples ' + samples + " --n_iter 1")
+            interaction.user.send('Image gen done')
+
 client.run(TOKEN)
-#client.run('MTA2NDAwMTE5NzUxNTczNTA3MQ.G3HFFn.-5paqzNfFGQk8TnQjVNkHQPSt8Urpe-prtl20A')
 
 
