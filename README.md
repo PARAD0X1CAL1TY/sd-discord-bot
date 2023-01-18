@@ -1,5 +1,5 @@
 # sd-discord-bot
-## WIP DOCUMENTATION
+
 ## Getting Started
 
 # 1. Prerequisites
